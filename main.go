@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -27,11 +28,15 @@ func readCsvFile(filePath string) [][]string {
 func main() {
 	records := readCsvFile("./problems.csv")
 
+	var answerTime int
+	flag.IntVar(&answerTime, "limit", 10, "number of lines to read from the file")
+	flag.Parse()
+
 	questionsCorrect := 0
 
 	totalQuestions := len(records)
 
-	answerTime := 3
+	//answerTime := 3
 
 	for _, v := range records {
 		fmt.Println("What is", v[0], "?")
