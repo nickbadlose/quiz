@@ -36,8 +36,6 @@ func main() {
 
 	totalQuestions := len(records)
 
-	//answerTime := 3
-
 	for _, v := range records {
 		fmt.Println("What is", v[0], "?")
 
@@ -51,6 +49,7 @@ func main() {
 
 		go func() {
 			var answer string
+
 			_, err := fmt.Scan(&answer)
 			if err != nil {
 				fmt.Println("Something went wrong")
@@ -59,19 +58,15 @@ func main() {
 			answerChan <- string(answer)
 		}()
 
-	answerLoop:
-		for {
-			select {
-			case answer := <-answerChan:
-				if answer == v[1] {
-					questionsCorrect++
-				}
-				break answerLoop
-			case <-timeoutChan:
-				fmt.Println("You got", questionsCorrect, "questions right. Then you ran out of time!")
-				close(timeoutChan)
-				return
+		select {
+		case answer := <-answerChan:
+			if answer == v[1] {
+				questionsCorrect++
 			}
+		case <-timeoutChan:
+			fmt.Println("You got", questionsCorrect, "questions right. Then you ran out of time!")
+			close(timeoutChan)
+			return
 		}
 		close(answerChan)
 	}
